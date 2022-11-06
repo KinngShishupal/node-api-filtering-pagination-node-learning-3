@@ -1,5 +1,14 @@
 const Tour = require('../models/tourModel');
 
+const aliasTopTours = (req, res, next) => {
+  // middleware to get top 5 best tours
+  // here we will manipulate the request query before it passes on to getAllTours
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'ratingsAverage,price,name,summary,difficulty';
+  next();
+};
+
 // const getAllTours = async (req, res) => {
 
 // This contains only filtering , normal and advanced
@@ -47,6 +56,7 @@ const Tour = require('../models/tourModel');
 // };
 
 const getAllTours = async (req, res) => {
+  console.log('query', req.query);
   // This contains filetring, and sorting
   try {
     // eslint-disable-next-line node/no-unsupported-features/es-syntax
@@ -218,4 +228,5 @@ module.exports = {
   createTour,
   updateTour,
   deleteTour,
+  aliasTopTours,
 };
