@@ -103,12 +103,29 @@ const getAllTours = async (req, res) => {
     }
 
     // 4. Pagination
-    // console.log('ss', req.query);
+    // it is achieved by using limit and page keyword in api
+    // http://localhost:3000/api/v1/tours?page=2&limit=10
+    // above api wants page 2 when tours per page is 10
+    // skip = how many items we want to skip before getting result
+    // limit = how may items we want to get in output
+
+    // setting default value for limit and page
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+
+    query = query.skip(skip).limit(limit); // skips fist 10 items and get next ten items
+
+    // to throw an error if user selects any page which doesnot exists
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) {
+        throw new Error('This Page Doesnot Exists ...');
+      }
+    }
     // EXECUTE QUERY
 
     const tours = await query; //first way to apply query
-
-    console.log('tours', tours);
 
     // const tours = await Tour.find().where('duration').equals(5).where('price').equals(100) //second way
     // we have here less than greater than all sort of stuff
